@@ -43,6 +43,29 @@ def select_folder():
     if folder_path:
         save_folder.set(folder_path)
 
+def download_all():
+    for url in links:
+        download_exe(url)
+    messagebox.showinfo("Success", "All files uploaded successfully")    
+
+def save_links():
+    file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt")])
+    if file_path:
+        with open(file_path, "w") as f:
+            for link in links:
+                f.write(link + "\n")
+        messagebox.showinfo("Success", "The list of links was successfully saved")
+
+def load_links():
+    file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt")])
+    if file_path:
+        url_listbox.delete(0, tk.END)  # Clearing list of links
+        with open(file_path, "r") as f:
+            loaded_links = f.read().splitlines()
+            links.clear()  # Clearing current link list
+            links.extend(loaded_links)  # Adding downloaded links
+            update_listbox()
+
 # Creating a GUI
 root = tk.Tk()
 root.title("Downloading exe files")
@@ -84,6 +107,15 @@ select_folder_button.grid(row=5, column=0, columnspan=2, padx=5, pady=5)
 
 download_button = tk.Button(root, text="Download selected", command=lambda: download_exe(url_listbox.get(tk.ACTIVE)))
 download_button.grid(row=6, column=0, columnspan=2, padx=5, pady=5)
+
+download_all_button = tk.Button(root, text="Download all", command=download_all)
+download_all_button.grid(row=6, column=2, columnspan=2, padx=5, pady=5)
+
+load_button = tk.Button(root, text="Load from file", command=load_links)
+load_button.grid(row=7, column=0, columnspan=2, padx=5, pady=5)
+
+save_button = tk.Button(root, text="Save list", command=save_links)
+save_button.grid(row=7, column=2, columnspan=2, padx=5, pady=5)
 
 # Launch
 root.mainloop()
